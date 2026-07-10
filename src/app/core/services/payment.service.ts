@@ -1,21 +1,26 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Payment, CreatePaymentRequest } from '../models/payment.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
   private apiUrl = 'https://localhost:7053/api/payments'; // TODO: move to env file
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
   getPayments(): Observable<Payment[]> {
     return this.http.get<Payment[]>(this.apiUrl);
   }
 
-  createPayment(request: CreatePaymentRequest): Observable<Payment> {
+  createPayment(amount: number): Observable<Payment> {
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) throw new Error('User not logged in');
+
+    const request = { customerId: userId, amount };
     return this.http.post<Payment>(this.apiUrl, request);
   }
 

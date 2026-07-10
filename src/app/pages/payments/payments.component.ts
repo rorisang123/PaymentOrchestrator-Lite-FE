@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaymentService } from '../../core/services/payment.service';
 import { Payment, CreatePaymentRequest } from '../../core/models/payment.model';
+import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-payments',
@@ -11,6 +13,9 @@ import { Payment, CreatePaymentRequest } from '../../core/models/payment.model';
   templateUrl: './payments.component.html',
 })
 export class PaymentsComponent implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  
   payments: Payment[] = [];
   newPayment: CreatePaymentRequest = { customerId: '', amount: 0 };
   loading = false;
@@ -37,19 +42,15 @@ export class PaymentsComponent implements OnInit {
   }
 
   createPayment() {
-    if (!this.newPayment.customerId?.trim() || this.newPayment.amount <= 0) {
-      alert('Please enter a valid Customer ID and Amount > 0');
-      return;
-    }
+  if (this.newPayment.amount <= 0) return;
 
-    this.paymentService.createPayment(this.newPayment).subscribe({
-      next: () => {
-        this.newPayment = { customerId: '', amount: 0 };
-        this.loadPayments();
-      },
-      error: (err) => console.error(err)
-    });
-  }
+  this.paymentService.createPayment(this.newPayment.amount).subscribe({
+    next: () => {
+      this.newPayment.amount = 0;
+      this.loadPayments();
+    }
+  });
+}
 
   confirmPayment(paymentId: string) {
     this.confirmingId = paymentId;
@@ -64,5 +65,10 @@ export class PaymentsComponent implements OnInit {
         this.confirmingId = null;
       }
     });
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
