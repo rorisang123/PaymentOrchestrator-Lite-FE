@@ -1,0 +1,65 @@
+<div class="min-h-screen bg-zinc-950 text-white">
+  <div class="max-w-5xl mx-auto p-8">
+    <div class="flex justify-between items-center mb-10">
+      <h1 class="text-4xl font-bold">Payment Orchestrator Lite</h1>
+      <button (click)="loadPayments()" class="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-xl">Refresh</button>
+    </div>
+
+    <div class="bg-zinc-900 rounded-3xl p-8 mb-12 border border-zinc-800">
+      <h2 class="text-2xl font-semibold mb-6">Create New Payment</h2>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <input [(ngModel)]="newPayment.customerId" placeholder="Customer ID" 
+               class="md:col-span-5 bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500">
+        <input type="number" [(ngModel)]="newPayment.amount" placeholder="Amount (ZAR)" 
+               class="md:col-span-4 bg-zinc-800 border border-zinc-700 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500">
+        <button (click)="createPayment()" 
+                class="md:col-span-3 bg-blue-600 hover:bg-blue-500 rounded-2xl font-semibold py-4">
+          Create Payment
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800">
+      <table class="w-full">
+        <thead class="bg-zinc-800">
+          <tr>
+            <th class="text-left p-6">ID</th>
+            <th class="text-left p-6">Customer ID</th>
+            <th class="text-left p-6">Amount</th>
+            <th class="text-left p-6">Status</th>
+            <th class="text-left p-6">Created</th>
+            <th class="text-center p-6">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-800">
+          @for(p of payments; track p.id)
+          {
+            <tr class="hover:bg-zinc-800/50">
+            <td class="p-6 font-mono">{{ p.id.slice(0,8) }}...</td>
+            <td class="p-6">{{ p.customerId }}</td>
+            <td class="p-6 font-medium">R {{ p.amount | number:'1.2-2' }}</td>
+            <td class="p-6">
+              <span [ngClass]="p.status === 'Confirmed' 
+                ? 'bg-emerald-500/20 text-emerald-400' 
+                : 'bg-amber-500/20 text-amber-400'" 
+                class="px-4 py-1 rounded-full text-sm font-medium">
+                {{ p.status }}
+              </span>
+            </td>
+            <td class="p-6 text-sm text-zinc-400">{{ p.createdAt | date:'short' }}</td>
+            <td class="p-6 text-center">
+              <button 
+                *ngIf="p.status === 'Pending'"
+                (click)="confirmPayment(p.id)"
+                [disabled]="confirmingId === p.id"
+                class="bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-700 px-6 py-2 rounded-2xl text-sm font-medium transition">
+                {{ confirmingId === p.id ? 'Confirming...' : 'Confirm' }}
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
