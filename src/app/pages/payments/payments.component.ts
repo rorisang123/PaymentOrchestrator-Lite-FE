@@ -14,6 +14,7 @@ export class PaymentsComponent implements OnInit {
   payments: Payment[] = [];
   newPayment: CreatePaymentRequest = { customerId: '', amount: 0 };
   loading = false;
+  confirmingId: string | null = null;
 
   constructor(private paymentService: PaymentService) {}
 
@@ -36,8 +37,8 @@ export class PaymentsComponent implements OnInit {
   }
 
   createPayment() {
-    if (!this.newPayment.customerId || this.newPayment.amount <= 0) {
-      alert('Please fill Customer ID and Amount');
+    if (!this.newPayment.customerId?.trim() || this.newPayment.amount <= 0) {
+      alert('Please enter a valid Customer ID and Amount > 0');
       return;
     }
 
@@ -50,10 +51,18 @@ export class PaymentsComponent implements OnInit {
     });
   }
 
-  confirmPayment(id: string) {
-    this.paymentService.confirmPayment(id).subscribe({
-      next: () => this.loadPayments(),
-      error: (err) => console.error(err)
+  confirmPayment(paymentId: string) {
+    this.confirmingId = paymentId;
+
+    this.paymentService.confirmPayment(paymentId).subscribe({
+      next: () => {
+        this.loadPayments();
+        this.confirmingId = null;
+      },
+      error: (err) => {
+        console.error('Failed to confirm payment', err);
+        this.confirmingId = null;
+      }
     });
   }
 }
