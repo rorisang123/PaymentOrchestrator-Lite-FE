@@ -18,7 +18,7 @@ export class PaymentService {
 
   createPayment(amount: number): Observable<Payment> {
     const userId = this.authService.getCurrentUserId();
-    if (!userId) throw new Error('User not logged in');
+    if (!userId) throw new Error('Not authenticated');
 
     const request = { customerId: userId, amount };
     return this.http.post<Payment>(this.apiUrl, request);
