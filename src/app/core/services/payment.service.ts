@@ -1,14 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Payment, CreatePaymentRequest } from '../models/payment.model';
+import { Payment } from '../models/payment.model';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environements/environment.dev';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = 'https://localhost:7053/api/payments'; // TODO: move to env file
+  private apiUrl = `${environment.apiUrl}/payments`;
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 

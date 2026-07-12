@@ -2,12 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.model';
+import { environment } from '../../../environements/environment.dev';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7053/api/auth'; // TODO: move to env file
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'authToken';
   private userIdKey = 'userId';
   private http = inject(HttpClient);
