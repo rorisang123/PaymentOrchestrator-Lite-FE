@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaymentService } from '../../core/services/payment.service';
@@ -22,7 +22,10 @@ export class PaymentsComponent implements OnInit {
   confirmingId = signal<string | null>(null);
   newPayment: CreatePaymentRequest = { customerId: '', amount: 0 };
 
-  hasPayments = computed(() => this.payments().length > 0);
+  constructor() {
+    effect(() => {
+    });
+  }
 
   ngOnInit() {
     this.loadPayments();
@@ -48,6 +51,7 @@ export class PaymentsComponent implements OnInit {
     this.paymentService.createPayment(this.newPayment.amount).subscribe({
       next: () => {
         this.newPayment.amount = 0;
+        this.loadPayments();
       },
       error: (err) => console.error(err)
     });
@@ -58,6 +62,7 @@ export class PaymentsComponent implements OnInit {
 
     this.paymentService.confirmPayment(paymentId).subscribe({
       next: () => {
+        this.loadPayments();
         this.confirmingId.set(null);
       },
       error: (err) => {
