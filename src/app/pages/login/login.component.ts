@@ -24,7 +24,7 @@ export class LoginComponent {
 
     this.authService.login(this.credentials).subscribe({
       next: () => {
-        this.router.navigate(['/payments']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.error = err?.error?.message || 'Invalid email or password';
