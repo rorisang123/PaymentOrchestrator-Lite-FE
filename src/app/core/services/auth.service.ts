@@ -19,10 +19,12 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
-      tap(response => this.saveAuth(response))
-    );
-  }
+  return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
+    tap(response => {
+      this.saveAuth(response);
+    })
+  );
+}
 
   private saveAuth(response: AuthResponse) {
     localStorage.setItem(this.tokenKey, response.token);
