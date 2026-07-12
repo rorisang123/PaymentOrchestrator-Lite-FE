@@ -1,6 +1,5 @@
 <div class="min-h-screen bg-slate-50">
   <div class="max-w-6xl mx-auto p-8">
-    <!-- Header -->
     <div class="flex justify-between items-center mb-10">
       <div class="flex items-center gap-4">
         <div class="w-11 h-11 bg-blue-700 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">P</div>
@@ -10,7 +9,7 @@
       <div class="flex items-center gap-4">
         <button (click)="loadPayments()" 
                 class="px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-100 rounded-xl text-slate-700 font-medium">
-          ↻ Refresh
+          Refresh
         </button>
         
         <button (click)="logout()" 
@@ -50,7 +49,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          @for (p of payments; track p.id) {
+          @for (p of payments(); track p.id) {
             <tr class="hover:bg-slate-50">
               <td class="p-6 font-mono text-sm text-slate-500">{{ p.id.slice(0,8) }}...</td>
               <td class="p-6 text-slate-900">{{ p.customerId }}</td>
@@ -65,13 +64,14 @@
               </td>
               <td class="p-6 text-sm text-slate-500">{{ p.createdAt | date:'short' }}</td>
               <td class="p-6 text-center">
-                <button 
-                  *ngIf="p.status === 'Pending'"
+                @if(p.status === 'Pending') {
+                  <button 
                   (click)="confirmPayment(p.id)"
-                  [disabled]="confirmingId === p.id"
+                  [disabled]="confirmingId() === p.id"
                   class="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-400 px-6 py-2 rounded-2xl text-sm font-medium text-white transition">
-                  {{ confirmingId === p.id ? 'Confirming...' : 'Confirm' }}
+                  {{ confirmingId() === p.id ? 'Confirming...' : 'Confirm' }}
                 </button>
+                }
               </td>
             </tr>
           }

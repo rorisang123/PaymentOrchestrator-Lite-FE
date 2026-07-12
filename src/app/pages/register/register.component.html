@@ -9,35 +9,38 @@
     <form (ngSubmit)="onRegister()" class="space-y-6">
       <input 
         type="text" 
-        [(ngModel)]="credentials.username" 
+        [value]="credentials().username"
+        (input)="credentials.set({...credentials(), username: $event.target.value})"
         placeholder="Username"
         required
         class="w-full bg-white border border-slate-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-600">
 
       <input 
         type="email" 
-        [(ngModel)]="credentials.email" 
+        [value]="credentials().email"
+        (input)="credentials.set({...credentials(), email: $event.target.value})"
         placeholder="Email"
         required
         class="w-full bg-white border border-slate-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-600">
 
       <input 
         type="password" 
-        [(ngModel)]="credentials.password" 
+        [value]="credentials().password"
+        (input)="credentials.set({...credentials(), password: $event.target.value})"
         placeholder="Password"
         required
         class="w-full bg-white border border-slate-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-600">
 
       <button 
         type="submit"
-        [disabled]="loading"
+        [disabled]="loading()"
         class="w-full bg-blue-700 hover:bg-blue-800 disabled:bg-slate-400 py-4 rounded-2xl font-semibold text-lg text-white transition">
-        {{ loading ? 'Creating Account...' : 'Register' }}
+        {{ loading() ? 'Creating Account...' : 'Register' }}
       </button>
     </form>
 
-    @if (error) {
-      <p class="text-red-600 text-center mt-4">{{ error }}</p>
+    @if (error()) {
+      <p class="text-red-600 text-center mt-4">{{ error() }}</p>
     }
   
     <p class="text-center text-slate-500 mt-6">
