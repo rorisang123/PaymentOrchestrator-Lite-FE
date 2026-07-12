@@ -5,6 +5,7 @@ import { PaymentService } from '../../core/services/payment.service';
 import { Payment, CreatePaymentRequest } from '../../core/models/payment.model';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-payments',
@@ -16,6 +17,7 @@ export class PaymentsComponent implements OnInit {
   private paymentService = inject(PaymentService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   payments = signal<Payment[]>([]);
   loading = signal(false);
@@ -39,21 +41,25 @@ export class PaymentsComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error(err);
+        this.toastService.show('Failed to load payments. Please try again.', 'error');
         this.loading.set(false);
       }
     });
   }
 
   createPayment() {
-    if (this.newPayment.amount <= 0) return;
+    if (this.newPayment.amount <= 0) {
+      this.toastService.show('Please enter a valid amount', 'error');
+      return;
+    }
 
     this.paymentService.createPayment(this.newPayment.amount).subscribe({
       next: () => {
         this.newPayment.amount = 0;
+        this.toastService.show('Payment created successfully!', 'success');
         this.loadPayments();
       },
-      error: (err) => console.error(err)
+      error: () => this.toastService.show('Failed to create payment', 'error')
     });
   }
 
@@ -62,11 +68,12 @@ export class PaymentsComponent implements OnInit {
 
     this.paymentService.confirmPayment(paymentId).subscribe({
       next: () => {
+        this.toastService.show('Payment confirmed successfully!', 'success');
         this.loadPayments();
         this.confirmingId.set(null);
       },
-      error: (err) => {
-        console.error('Failed to confirm', err);
+      error: () => {
+        this.toastService.show('Failed to confirm payment', 'error');
         this.confirmingId.set(null);
       }
     });
