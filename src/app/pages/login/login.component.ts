@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -11,26 +12,22 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-    private router = inject(Router);
+  private router = inject(Router);
   private authService = inject(AuthService);
 
-  credentials = { email: '', password: '' };
-  error = '';
-  loading = false;
+  credentials = signal({ email: '', password: '' });
+  error = signal('');
+  loading = signal(false);
 
   onLogin() {
-    this.loading = true;
-    this.error = '';
+  this.loading.set(true);
+  this.error.set('');
 
-    this.authService.login(this.credentials).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        this.error = err?.error?.message || 'Invalid email or password';
-        this.loading = false;
-      },
-      complete: () => this.loading = false
+  this.authService.login(this.credentials()).pipe(
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: () => this.router.navigate(['/']),
+      error: (err) => this.error.set(err?.error?.message || 'Invalid email or password')
     });
   }
 }
