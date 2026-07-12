@@ -1,0 +1,12 @@
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+      @for (toast of toastService.toasts(); track toast.id) {
+        <div [ngClass]="{
+          'bg-green-600': toast.type === 'success',
+          'bg-red-600': toast.type === 'error',
+          'bg-blue-600': toast.type === 'info'
+        }" 
+        class="text-white px-6 py-4 rounded-2xl shadow-xl flex items-center gap-3 min-w-[280px]">
+          <span>{{ toast.message }}</span>
+        </div>
+      }
+</div>
