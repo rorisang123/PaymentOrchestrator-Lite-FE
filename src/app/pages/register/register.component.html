@@ -23,13 +23,43 @@
         required
         class="w-full bg-white border border-slate-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-600">
 
-      <input 
-        type="password" 
-        [value]="credentials().password"
-        (input)="credentials.set({...credentials(), password: $event.target.value})"
-        placeholder="Password"
-        required
-        class="w-full bg-white border border-slate-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-600">
+      <div>
+  <input 
+    type="password" 
+    [value]="credentials().password"
+    (input)="onPasswordChange($event.target.value)"
+    placeholder="Password"
+    required
+    class="w-full bg-white border border-slate-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-600 text-lg">
+
+  @if (credentials().password) {
+    <div class="mt-3">
+      <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+        <div 
+          [style.width.%]="passwordStrength() === 'strong' ? 100 : passwordStrength() === 'medium' ? 66 : 33"
+          [ngClass]="{
+            'bg-red-500': passwordStrength() === 'weak',
+            'bg-orange-500': passwordStrength() === 'medium',
+            'bg-green-500': passwordStrength() === 'strong'
+          }" 
+          class="h-2 transition-all duration-300">
+        </div>
+      </div>
+
+      <div class="mt-4 space-y-2 text-sm">
+        <div [ngClass]="credentials().password.length >= 8 ? 'text-green-600' : 'text-slate-400'">
+          At least 8 characters
+        </div>
+        <div [ngClass]="hasNumber() ? 'text-green-600' : 'text-slate-400'">
+          Contains a number
+        </div>
+        <div [ngClass]="hasSpecial() ? 'text-green-600' : 'text-slate-400'">
+          Contains a special character
+        </div>
+      </div>
+    </div>
+  }
+</div>
 
       <button 
         type="submit"
