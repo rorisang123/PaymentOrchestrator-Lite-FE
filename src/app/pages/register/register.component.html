@@ -32,7 +32,6 @@
     required
     class="w-full bg-white border border-slate-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-600 text-lg">
 
-  <!-- Password Strength Bar -->
   @if (credentials().password) {
     <div class="mt-3">
       <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
@@ -47,16 +46,15 @@
         </div>
       </div>
 
-      <!-- Checklist -->
       <div class="mt-4 space-y-2 text-sm">
         <div [ngClass]="credentials().password.length >= 8 ? 'text-green-600' : 'text-slate-400'">
-          • At least 8 characters
+          At least 8 characters
         </div>
         <div [ngClass]="hasNumber() ? 'text-green-600' : 'text-slate-400'">
-          • Contains a number
+          Contains a number
         </div>
         <div [ngClass]="hasSpecial() ? 'text-green-600' : 'text-slate-400'">
-          • Contains a special character
+          Contains a special character
         </div>
       </div>
     </div>
